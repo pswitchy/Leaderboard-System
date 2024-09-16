@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Real-Time Leaderboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+<body>
+    <h1>Leaderboard</h1>
+    <ul id="leaderboard"></ul>
+    <div id="notifications"></div>
+
+    <script>
+        var socket = io();
+
+        socket.on('update_leaderboard', function(top_players) {
+            var leaderboard = document.getElementById('leaderboard');
+            leaderboard.innerHTML = '';
+            top_players.forEach(function(player) {
+                var li = document.createElement('li');
+                li.textContent = player[0] + ': ' + player[1];
+                leaderboard.appendChild(li);
+            });
+        });
+
+        socket.on('notification', function(data) {
+            var notifications = document.getElementById('notifications');
+            var div = document.createElement('div');
+            div.textContent = data.message;
+            notifications.appendChild(div);
+        });
+
+        // Example of submitting a score
+        socket.emit('submit_score', {user_id: 'user1', score: 100, game: 'game1'});
+    </script>
+</body>
+</html>
